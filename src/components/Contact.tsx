@@ -2,13 +2,37 @@ import { useState } from 'react'
 import { Mail, Github, Send } from 'lucide-react'
 
 export default function Contact() {
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+    const [statusMessage, setStatusMessage] = useState('')
     const [formData, setFormData] = useState({ name: '', email: '', message: '' })
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        // Form handling logic would go here
-        alert('Thank you for your message! I will get back to you soon.')
-        setFormData({ name: '', email: '', message: '' })
+        setStatus('loading')
+        setStatusMessage('')
+
+        try {
+            const res = await fetch('http://localhost:3000/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            })
+
+            const data = await res.json()
+
+            if (!res.ok) throw new Error(data.message || 'Failed to send message')
+
+            setStatus('success')
+            setStatusMessage('Message sent successfully! I will get back to you soon.')
+            setFormData({ name: '', email: '', message: '' })
+        } catch (error) {
+            if (error instanceof Error) {
+                setStatus('error')
+                setStatusMessage(error.message)
+            }
+        } finally {
+            setStatus('idle')
+        }
     }
 
     return (
@@ -61,6 +85,12 @@ export default function Contact() {
                     <form onSubmit={handleSubmit} className="p-8 lg:p-12 space-y-6">
                         <h3 className="text-2xl font-bold text-white mb-6">Send a Message</h3>
 
+                        {statusMessage && (
+                            <div className={`p-4 rounded-lg mb-4 ${status === 'success' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
+                                {statusMessage}
+                            </div>
+                        )}
+
                         <div>
                             <label className="block text-sm text-slate-400 mb-2">Name</label>
                             <input
@@ -97,8 +127,14 @@ export default function Contact() {
                             />
                         </div>
 
-                        <button type="submit" className="btn-primary w-full flex items-center justify-center gap-2">
-                            Send Message <Send size={18} />
+                        <button
+                            type="submit"
+                            disabled={status === 'loading'}
+                            className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {status === 'loading' ? 'Sending...' : (
+                                <>Send Message <Send size={18} /></>
+                            )}
                         </button>
                     </form>
                 </div>

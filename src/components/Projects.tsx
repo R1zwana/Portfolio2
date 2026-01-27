@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Folder, Github, ExternalLink, Loader2 } from 'lucide-react'
 
-const techColors = {
+const techColors: Record<string, string> = {
     JavaScript: '#f1e05a',
     TypeScript: '#3178c6',
     Python: '#3572A5',
@@ -12,9 +12,9 @@ const techColors = {
 }
 
 export default function Projects() {
-    const [projects, setProjects] = useState([])
+    const [projects, setProjects] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         async function fetchProjects() {
@@ -24,10 +24,10 @@ export default function Projects() {
                 )
                 if (!res.ok) throw new Error('Failed to fetch')
                 const repos = await res.json()
-                const filtered = repos.filter((r) => !r.fork).slice(0, 6)
+                const filtered = repos.filter((r: any) => !r.fork).slice(0, 6)
                 setProjects(filtered)
             } catch (err) {
-                setError(err.message)
+                if (err instanceof Error) setError(err.message)
             } finally {
                 setLoading(false)
             }
@@ -85,7 +85,7 @@ export default function Projects() {
     )
 }
 
-function ProjectCard({ project }) {
+function ProjectCard({ project }: { project: any }) {
     const lang = project.language || 'Code'
     const langColor = techColors[lang] || '#8b5cf6'
 

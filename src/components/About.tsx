@@ -8,8 +8,8 @@ export default function About() {
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        entry.target.classList.add('animate-fade-in-up')
-                        entry.target.style.opacity = '1'
+                        entry.target.classList.add('animate-fade-in-up');
+                        (entry.target as HTMLElement).style.opacity = '1'
                     }
                 })
             },

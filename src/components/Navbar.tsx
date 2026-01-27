@@ -9,14 +9,14 @@ const navLinks = [
     { name: 'Contact', href: '#contact' },
 ]
 
-export default function Navbar({ scrolled }) {
+export default function Navbar({ scrolled }: { scrolled: boolean }) {
     const [mobileOpen, setMobileOpen] = useState(false)
 
     return (
         <header
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-                    ? 'bg-slate-950/90 backdrop-blur-lg border-b border-slate-800/50 py-4'
-                    : 'py-6'
+                ? 'bg-slate-950/90 backdrop-blur-lg border-b border-slate-800/50 py-4'
+                : 'py-6'
                 }`}
         >
             <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
